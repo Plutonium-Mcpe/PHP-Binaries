@@ -144,7 +144,6 @@ jobs:
           tag: php-${{ steps.version.outputs.PHP_VERSION }}-latest
           commit: ${{ github.sha }}
           allowUpdates: true
-          bodyFile: ${{ github.workspace }}/changelog.md
           removeArtifacts: true
           prerelease: ${{ endsWith(github.ref_name, '-preview') }}
 
@@ -158,6 +157,5 @@ jobs:
           name: PHP ${{ steps.version.outputs.PHP_VERSION }} (Build ${{ github.run_number }})
           tag: php-${{ steps.version.outputs.PHP_VERSION }}-build-${{ github.run_number }}
           commit: ${{ github.sha }}
-          bodyFile: ${{ github.workspace }}/changelog.md
           prerelease: ${{ endsWith(github.ref_name, '-preview') }}
    
