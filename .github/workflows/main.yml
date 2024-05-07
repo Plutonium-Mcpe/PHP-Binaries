@@ -12,8 +12,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  all-builds:
-    name: PM${{ matrix.pm-version-major }}
+    linux:
+    name: Linux (PM ${{ matrix.pm-version-major }})
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         pm-version-major: [5]
