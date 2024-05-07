@@ -1,4 +1,4 @@
-name: Build PHP binaries
+name: Build and publish PHP binaries
 
 on:
   push:
@@ -134,7 +134,7 @@ jobs:
           path: ${{ github.workspace }}
 
       - name: Update latest branch release
-        uses: ncipollo/release-action@v1.13.0
+        uses: ncipollo/release-action@v1.14.0
         with:
           artifacts: |
             ${{ github.workspace }}/Linux-PM*/*.tar.gz
@@ -148,7 +148,7 @@ jobs:
           prerelease: ${{ endsWith(github.ref_name, '-preview') }}
 
       - name: Publish unique release
-        uses: ncipollo/release-action@v1.13.0
+        uses: ncipollo/release-action@v1.14.0
         with:
           artifacts: |
             ${{ github.workspace }}/Linux-PM*/*.tar.gz

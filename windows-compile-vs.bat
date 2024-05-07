@@ -3,7 +3,7 @@
 REM For future users: This file MUST have CRLF line endings. If it doesn't, lots of inexplicable undesirable strange behaviour will result.
 REM Also: Don't modify this version with sed, or it will screw up your line endings.
 set PHP_MAJOR_VER=8.2
-set PHP_VER=%PHP_MAJOR_VER%.13
+set PHP_VER=%PHP_MAJOR_VER%.17
 set PHP_GIT_REV=php-%PHP_VER%
 set PHP_DISPLAY_VER=%PHP_VER%
 set PHP_SDK_VER=2.2.0
@@ -24,20 +24,19 @@ set LEVELDB_MCPE_VER=1c7564468b41610da4f498430e795ca4de0931ff
 set LIBDEFLATE_VER=dd12ff2b36d603dbb7fa8838fe7e7176fcbd4f6f
 set LIBZSTD_VER=1.5.5
 
-set PHP_PTHREADS_VER=4.2.2
 set PHP_PMMPTHREAD_VER=6.1.0
 set PHP_YAML_VER=2.2.3
 set PHP_CHUNKUTILS2_VER=0.3.5
 set PHP_IGBINARY_VER=3.2.15
 set PHP_LEVELDB_VER=317fdcd8415e1566fc2835ce2bdb8e19b890f9f3
-set PHP_CRYPTO_VER=0.3.2
+set PHP_CRYPTO_VER=abbe7cbf869f96e69f2ce897271a61d32f43c7c0
 set PHP_RECURSIONGUARD_VER=0.1.0
 set PHP_MORTON_VER=0.1.2
 set PHP_LIBDEFLATE_VER=0.2.1
 set PHP_XXHASH_VER=0.2.0
-set PHP_XDEBUG_VER=3.3.0
+set PHP_XDEBUG_VER=3.3.1
 set PHP_ARRAYDEBUG_VER=0.2.0
-set PHP_ENCODING_VER=0.2.3
+set PHP_ENCODING_VER=0.3.0
 set PHP_ZSTD_VER=0.12.3
 
 set script_path=%~dp0
@@ -76,6 +75,10 @@ if "%PHP_JIT_SUPPORT%"=="1" (
 
 if "%PM_VERSION_MAJOR%"=="" (
     call :pm-echo-error "Please specify PocketMine-MP major version by setting the PM_VERSION_MAJOR environment variable"
+    exit 1
+)
+if "%PM_VERSION_MAJOR%" lss "5" (
+    call :pm-echo-error "PocketMine-MP 4.x and older are no longer supported"
     exit 1
 )
 
@@ -237,14 +240,7 @@ cd /D ..
 call :pm-echo "Getting additional PHP extensions..."
 cd /D php-src\ext
 
-set THREAD_EXT_FLAGS=""
-if "%PM_VERSION_MAJOR%" geq "5" (
-    call :get-extension-zip-from-github "pmmpthread" "%PHP_PMMPTHREAD_VER%" "pmmp" "ext-pmmpthread" || exit 1
-    set THREAD_EXT_FLAGS="--with-pmmpthread=shared"
-) else (
-    call :get-extension-zip-from-github "pthreads" "%PHP_PTHREADS_VER%" "pmmp" "ext-pmmpthread" || exit 1
-    set THREAD_EXT_FLAGS="--with-pthreads=shared"
-)
+call :get-extension-zip-from-github "pmmpthread"            "%PHP_PMMPTHREAD_VER%"            "pmmp"     "ext-pmmpthread"          || exit 1
 call :get-extension-zip-from-github "yaml"                  "%PHP_YAML_VER%"                  "php"      "pecl-file_formats-yaml"  || exit 1
 call :get-extension-zip-from-github "chunkutils2"           "%PHP_CHUNKUTILS2_VER%"           "pmmp"     "ext-chunkutils2"         || exit 1
 call :get-extension-zip-from-github "igbinary"              "%PHP_IGBINARY_VER%"              "igbinary" "igbinary"                || exit 1
@@ -324,7 +320,8 @@ call configure^
  --with-mysqlnd^
  --with-openssl^
  --with-pcre-jit^
- %THREAD_EXT_FLAGS%^
+ --with-pmmpthread=shared^
+ --with-pmmpthread-sockets^
  --with-simplexml^
  --with-sodium^
  --with-sqlite3=shared^
